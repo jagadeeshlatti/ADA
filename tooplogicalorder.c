@@ -1,70 +1,42 @@
-#include<stdio.h>
-#include<stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#define MAX_VERTICES 100
+int a[10][10], visited[10], s[10], t=-1, n;
 
-int graph[MAX_VERTICES][MAX_VERTICES];
-bool visited[MAX_VERTICES];
-int stack[MAX_VERTICES];
-int top = -1;
-
-void initializeGraph(int vertices) {
-    for (int i = 0; i < vertices; i++) {
-        visited[i] = false;
-        for (int j = 0; j < vertices; j++) {
-            graph[i][j] = 0;
+void topological(int node){
+    int i;
+    visited[node] = 1;
+    for (i = 0; i < n; i++){
+        if (a[node][i]==1 && visited[node]==0){
+            topological(i);
         }
     }
+    s[++t] = node;
 }
 
-void addEdge(int start, int end) {
-    graph[start][end] = 1;
-}
+int main (){
 
-void topologicalSortUtil(int vertex, int vertices) {
-    visited[vertex] = true;
+    int i,j;
 
-    for (int i = 0; i < vertices; i++) {
-        if (graph[vertex][i] == 1 && !visited[i]) {
-            topologicalSortUtil(i, vertices);
+    printf("Enter the number of nodes:\n");
+    scanf("%d",&n);
+
+    for (i=0; i<n; i++)
+        s[i] = 0;
+
+    printf("\nEnter graph in matrix form:\n");
+    for (i=0; i<n; i++){
+        for (j=0; j<n; j++){
+            scanf("%d", &a[i][j]);
         }
     }
-
-    stack[++top] = vertex;
-}
-
-void topologicalSort(int vertices) {
-    for (int i = 0; i < vertices; i++) {
-        if (!visited[i]) {
-            topologicalSortUtil(i, vertices);
-        }
+    for (i=0; i<n; i++){
+        topological(i);
+    }
+    printf ("\nSorted graph:\n");
+    for (i = 0; i<=t; i++){
+        printf("%d ", s[i]);
     }
 
-    printf("Topological Ordering: ");
-    while (top >= 0) {
-        printf("%d ", stack[top--]);
-    }
-    printf("\n");
-}
-
-int main() {
-    int vertices, edges, start, end;
-
-    printf("Enter the number of vertices: ");
-    scanf("%d", &vertices);
-
-    printf("Enter the number of edges: ");
-    scanf("%d", &edges);
-
-    initializeGraph(vertices);
-
-    printf("Enter the edges (start end):\n");
-    for (int i = 0; i < edges; i++) {
-        scanf("%d %d", &start, &end);
-        addEdge(start, end);
-    }
-
-    topologicalSort(vertices);
-
-    return 0;
+        return 0;
 }
